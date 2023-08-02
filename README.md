@@ -1,16 +1,29 @@
-# debugger_server
+# Snitch
 
-A new Flutter project.
+An application to display debug logs via a socket connection.
 
-## Getting Started
+## Usage
 
-This project is a starting point for a Flutter application.
+To send data to the app, open a socket connection to `localhost:9999` and write data to it.
 
-A few resources to get you started if this is your first Flutter project:
+The app will display any data you send it, but if you want syntax highlighting you should send it as JSON in the following schema.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```json
+{
+  "origin": {
+    "file": "path/to/file",
+    "lineNumber": 23,
+    "hostname": "my-computer.local"
+  },
+  "language": "dart",
+  "value": "json-stringified-values"
+}
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+To send commands to the app you can add the `command` key to the JSON, passing it the command to execute. Note that you can't pass arbitrary commands as they won't be recognized.
+
+```json
+{
+  "command": "clear"
+}
+```
