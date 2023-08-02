@@ -12,4 +12,12 @@ class Origin {
       json['hostname'],
     );
   }
+
+  factory Origin.fromDefaults() {
+    return Origin(
+      'Untraceable file',
+      69,
+      '',
+    );
+  }
 }
