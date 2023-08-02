@@ -2,6 +2,8 @@
 
 An application to display debug logs via a socket connection.
 
+![Screenshot of Snitch](screenshot.jpg)
+
 ## Usage
 
 To send data to the app, open a socket connection to `localhost:9999` and write data to it.
