@@ -11,17 +11,17 @@ import 'widgets/status_bar.dart';
 import 'widgets/timestamp.dart';
 
 void main() async {
-  runApp(const MyApp());
+  runApp(const SnitchApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class SnitchApp extends StatefulWidget {
+  const SnitchApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<SnitchApp> createState() => _SnitchAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _SnitchAppState extends State<SnitchApp> {
   late ServerSocket _server;
   final List<Block> _data = [];
   final _scrollController = ScrollController();
@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   List<String>? processMessage(data) {
-    String lengthHeader = '';
+    String? lengthHeader = '';
     String jsonData = utf8.decode(data);
     List<String> decoded = [];
     RegExp messageLengthExp = RegExp(r"(\d+)|");
@@ -72,7 +72,11 @@ class _MyAppState extends State<MyApp> {
       if (matches == null) {
         return null;
       }
-      lengthHeader = matches.group(1)!;
+      lengthHeader = matches.group(1);
+      if (lengthHeader == null || lengthHeader.isEmpty) {
+        decoded.add(jsonData);
+        break;
+      }
       var part = jsonData.substring(
         lengthHeader.length + 1,
         int.parse(lengthHeader) + lengthHeader.length + 1,
@@ -88,7 +92,7 @@ class _MyAppState extends State<MyApp> {
     return decoded;
   }
 
-  void onMessage(data) {
+  void onMessage(dynamic data) {
     if (_paused) {
       return;
     }
@@ -99,16 +103,20 @@ class _MyAppState extends State<MyApp> {
     }
 
     var blocks = messages.map((e) {
-      var j = jsonDecode(e);
-      if (j['command'] != null) {
-        parseCommand(j['command']);
-        return null;
+      dynamic j;
+      try {
+        j = jsonDecode(e);
+        if (j['command'] != null) {
+          parseCommand(j['command']);
+          return null;
+        }
+        return Block.fromJson(j);
+      } catch (error) {
+        return Block.fromDefaults(e);
       }
-      return Block.fromJson(j);
     });
 
     setState(() {
-      // add all blocks to the list
       _data.addAll(blocks.whereType<Block>());
       _newEvent = true;
     });
@@ -137,7 +145,7 @@ class _MyAppState extends State<MyApp> {
       onError: onError,
       onDone: onDone,
     );
-    // client.close();
+    client.close();
   }
 
   @override
@@ -150,7 +158,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Debugger',
+      title: 'Snitch',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -281,6 +289,7 @@ class _MyAppState extends State<MyApp> {
               Icons.add,
               color: Colors.white,
             ),
+            tooltip: 'Clear all',
           ),
           IconButton(
             splashRadius: 1,
@@ -298,6 +307,7 @@ class _MyAppState extends State<MyApp> {
               Icons.play_arrow,
               color: Colors.white,
             ),
+            tooltip: _paused ? 'Accept Connections' : 'Pause Connections',
           ),
         ],
       ),
