@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'models/block.dart';
@@ -131,12 +132,15 @@ class _SnitchAppState extends State<SnitchApp> {
   }
 
   void onError(er) {
-    // TODO: Do something meaningful
-    print("Client error $er");
+    if (kDebugMode) {
+      print("Client error $er");
+    }
   }
 
   void onDone() {
-    print("Client left");
+    if (kDebugMode) {
+      print("Client left");
+    }
   }
 
   void handleClient(Socket client) {
