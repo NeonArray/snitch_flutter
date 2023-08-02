@@ -40,7 +40,7 @@ class DeleteBlockButtonTheme extends ThemeExtension<DeleteBlockButtonTheme> {
     Color? fontColor,
   }) {
     return DeleteBlockButtonTheme(
-      iconColor: iconColor ?? this.iconColor,
+      iconColor: iconColor,
     );
   }
 
