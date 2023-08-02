@@ -17,4 +17,13 @@ class Block {
       json['command'],
     );
   }
+
+  factory Block.fromDefaults(String data) {
+    return Block(
+      Origin.fromDefaults(),
+      'unknown',
+      data,
+      null,
+    );
+  }
 }
